@@ -1,15 +1,26 @@
-# Contribution [#]: [Issue Title]
+# Contribution #1: ImportFeeds — catch symlink failures on Windows (beets #840)
 
-**Contribution Number:** [1 / 2 / 3]  
-**Student:** [Your Name]  
-**Issue:** [GitHub issue link]  
-**Status:** [Phase I / Phase II / Phase III / Phase IV] [In Progress / Complete]
+**Contribution Number:** 1  
+**Student:** Temitope S. Olugbemi  
+**Issue:** https://github.com/beetbox/beets/issues/840  
+**Status:** Phase I — In Progress
 
 ---
 
 ## Why I Chose This Issue
 
-[1-2 paragraphs explaining why this issue interests you, how it matches your skills/learning goals, what you hope to learn]
+I chose issue [#840 "ImportFeeds: fix/disable/catch symlink usage on windows"](https://github.com/beetbox/beets/issues/840) in [beetbox/beets](https://github.com/beetbox/beets) because it is a real, well-scoped bug in Python — one of the languages I work in most — and it lets me practice exactly the skills I want to build in this program: reading an unfamiliar, mature codebase, fixing a defect cleanly, and writing a regression test that proves the fix. It is labeled `bug` and `good first issue`, and the maintainer already described the intended fix in the thread ("we should catch and skip this"), so the acceptance criteria are clear.
+
+I'm interested in this because:
+
+1. **It's squarely in my skill set.** The fix is a focused change to a single Python plugin file (`beetsplug/importfeeds.py`) plus a test — no framework or domain knowledge I'd have to ramp up from scratch.
+2. **The scope is contained.** It's a small, bounded defect (a missing `try/except` around one filesystem call), not an open-ended feature — a realistic first contribution.
+3. **The project is active and the area is well-supported.** beets is pushed to almost daily, has a thorough `CONTRIBUTING.rst`, and there is a recently merged, nearly identical fix (the fetchart `OSError` handling in PR #6662) that I can use as a template for the fix, the test, and the changelog entry.
+4. **It matches my learning goals.** I want to get comfortable with Python error handling and filesystem edge cases, with mock-based regression testing, and with the full open-source PR/review workflow — and this issue exercises all three.
+
+From reading the issue thread and the code, I understand the current problem: when the importfeeds plugin is configured with `formats: link`, a failure to create a symlink (for example on Windows, where creating one requires elevated privilege) raises out of `beets.util.link()` and **aborts the entire `beet import` run** — even though the music files were already imported. My contribution will catch that failure, log a clear per-item warning, and let the import continue, making the plugin resilient on Windows instead of crashing.
+
+I have already left a comment on the issue introducing myself as a CodePath AI301 student, summarizing the fix I plan to make, and asking the maintainer a scoping question (whether to catch `beets.util.FilesystemError` — what the helper actually raises — versus a broader `OSError`).
 
 ---
 
