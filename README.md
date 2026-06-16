@@ -1,9 +1,9 @@
 # Contribution #1: ImportFeeds — catch symlink failures on Windows (beets #840)
 
-**Contribution Number:** 1
-**Student:** Temitope S. Olugbemi
-**Issue:** <https://github.com/beetbox/beets/issues/840>
-**Status:** Phase II complete (reproduced + dev environment ready)
+- **Contribution Number:** 1
+- **Student:** Temitope S. Olugbemi
+- **Issue:** <https://github.com/beetbox/beets/issues/840>
+- **Status:** Phase II complete (reproduced + dev environment ready)
 
 ---
 
@@ -39,7 +39,7 @@ A failed symlink logs a per-item warning and the import continues ("catch and sk
 
 ### Environment Setup
 
-Set up per `CONTRIBUTING.rst` on macOS / Python 3.12.6: `pipx install poetry poethepoet`, `poetry install` (in-project `.venv`), `pre-commit install`. Verified with `poe check-format` ("299 files already formatted"), `poe test test/plugins/test_importfeeds.py` (3 passed), and `beet version` (beets 2.11.0). Only snag: `pipx`'s launcher dir wasn't on `PATH`, so I run it as `sudo pipx ensurepath --global`.
+Set up per `CONTRIBUTING.rst` on macOS / Python 3.12.6: `pipx install poetry poethepoet`, `poetry install` (in-project `.venv`), `pre-commit install`. Verified with `poe check-format` ("299 files already formatted"), `poe test test/plugins/test_importfeeds.py` (3 passed), and `beet version` (beets 2.11.0). Only snag: `pipx`'s launcher dir wasn't on `PATH`, so I run it as `pipx ensurepath`.
 
 Working branch: <https://github.com/sammydynamo-dev/beets/tree/fix-issue-840>
 
