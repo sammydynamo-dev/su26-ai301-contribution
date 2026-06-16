@@ -13,3 +13,16 @@ uv-*.lock
 *.swp
 *~
 .gstack/
+
+# Upstream beets clone (worked on separately; not tracked in this docs repo)
+beets/
+
+# Raw command logs used to render screenshots
+docs/screenshots/.raw/
+
+# pytest junit output (written to repo root by beets' setup.cfg)
+.reports/
+
+# Local AI tooling config (context-mode routing) — redundant with the global
+# ~/.claude/CLAUDE.md; kept locally but not tracked in this contribution repo
+CLAUDE.md
