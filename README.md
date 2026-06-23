@@ -3,7 +3,7 @@
 - **Contribution Number:** 1
 - **Student:** Temitope S. Olugbemi
 - **Issue:** <https://github.com/beetbox/beets/issues/840>
-- **Status:** Phase II complete (reproduced + dev environment ready)
+- **Status:** Phase III in progress — fix + regression tests written (TDD) and passing on `fix-issue-840`; changelog added
 
 ---
 
@@ -97,7 +97,7 @@ Using UMPIRE framework (adapted):
 3. Add a `docs/changelog.rst` entry under *Unreleased → Bug fixes*, ending `` :bug:`840` ``.
 4. Run `poe format / lint / check-format / test / check-types`.
 
-**Implement:** Pending — Phase III, on branch `fix-issue-840` in my fork; commits linked here as I work.
+**Implement:** Done on `fix-issue-840` — commits `9d1394ac1` (fix + tests) and `a027e2563` (changelog).
 
 **Review:** Self-check against `CONTRIBUTING.rst` (catch `FilesystemError` not `OSError`; f-strings + logging shim; pytest `PluginTestCase`; ≤ 80 cols). Full checklist: [`docs/beets-contribution-checklist.md`](docs/beets-contribution-checklist.md). Per beets' AI policy, I open and drive the PR personally.
 
@@ -109,17 +109,22 @@ Using UMPIRE framework (adapted):
 
 ### Unit Tests
 
-- [ ] `test_link_failure_is_warned_not_fatal` (new): with `formats: link` and `beetsplug.importfeeds.link` patched to raise `FilesystemError`, `album_imported` completes without raising and logs a warning.
-- [ ] Existing `test_multi_format_album_playlist`, `test_playlist_in_subdir`, `test_playlist_per_session` still pass.
+Five new tests in `test/plugins/test_importfeeds.py` (written TDD — failing first), all passing alongside the existing three:
+
+- [x] `test_link_failure_does_not_abort_import` — `link` raises `FilesystemError`; `album_imported` doesn't raise.
+- [x] `test_link_failure_logs_warning` — a per-item warning is logged.
+- [x] `test_link_failure_continues_to_remaining_items` — remaining items still attempted after one fails.
+- [x] `test_non_filesystem_error_is_not_swallowed` — a `ValueError` still propagates (only `FilesystemError` is caught).
+- [x] `test_link_creates_symlink` — happy path still creates the symlink.
 
 ### Integration Tests
 
-- [ ] Read-only feeds dir: `beet import` now exits `0`, warns, and imports the track (symlink skipped).
-- [ ] Writable feeds dir: the symlink is still created (happy path unchanged).
+- [x] Read-only feeds dir: `beet import` now exits `0`, warns, and imports the track (symlink skipped).
+- [x] Writable feeds dir: the symlink is still created (covered by `test_link_creates_symlink`).
 
 ### Manual Testing
 
-Re-run the read-only-dir repro after the fix → expect exit `0` + a warning instead of `Error:`.
+Re-ran the read-only-dir repro on the fixed code: **exit `0`** (was `1`), logged `importfeeds: could not create symlink for …: Permission denied …`, and the track imported.
 
 ---
 
@@ -129,15 +134,34 @@ Re-run the read-only-dir repro after the fix → expect exit `0` + a warning ins
 
 Reproduced #840 on macOS, confirmed the root cause (`importfeeds.py:131`), set up the official poetry / poe / pre-commit toolchain, and verified the suite. Next: failing test → fix (Phase III).
 
-### Week [Y] Progress
+### Week 3 Progress (Jun 17–23)
 
-[Continue documenting as you work]
+**What I built:**
+- Wrapped the `link()` call in `_record_items` (`beetsplug/importfeeds.py`) in `try/except beets.util.FilesystemError` — logs a per-item warning and continues, so one failed symlink no longer aborts the whole import.
+- Added 5 regression tests in `test/plugins/test_importfeeds.py` (written TDD, failing first):
+  - `test_link_failure_does_not_abort_import` — a failed link doesn't raise
+  - `test_link_failure_logs_warning` — the failure is logged
+  - `test_link_failure_continues_to_remaining_items` — later items still attempted
+  - `test_non_filesystem_error_is_not_swallowed` — only `FilesystemError` is caught
+  - `test_link_creates_symlink` — happy path still creates the symlink
+- Added a `docs/changelog.rst` entry (`:bug:`840``).
+- All existing tests still pass — full suite: **2408 passed, 163 skipped, 0 failed**; `poe lint` / `check-format` / `mypy` clean.
+
+**Challenges faced:**
+- The mid-phase rebase bumped beets 2.11 → 2.12, so I re-verified the fix-site line numbers and re-ran `poetry install` before writing code.
+- `ruff`'s PT011 rule rejected a bare `pytest.raises(ValueError)`; fixed by asserting on the message with `match=`.
+- The `link` branch never creates the feeds dir, so the happy-path test had to `mkdir` it first.
+- Key design call: `link()` raises `FilesystemError` (not `OSError`), so the mock target is `beetsplug.importfeeds.link` and the `except` catches `FilesystemError`. Found the pattern in `beetsplug/playlist.py` line 139 and `beetsplug/fetchart.py` line 1504.
+
+**Commits this week:**
+- 9d1394ac1: fix(importfeeds): keep import going when a symlink can't be created
+- a027e2563: docs(changelog): add entry for importfeeds symlink fix (#840)
 
 ### Code Changes
 
-- **Files modified:** [List]
-- **Key commits:** [Links to important commits]
-- **Approach decisions:** [Why you chose certain approaches]
+- **Branch:** <https://github.com/sammydynamo-dev/beets/tree/fix-issue-840>
+- **Files modified:** `beetsplug/importfeeds.py` (`try/except` around `link()`), `test/plugins/test_importfeeds.py` (5 tests), `docs/changelog.rst` (entry).
+- **Approach decisions:** mirrors `playlist.py:139` / `fetchart.py:1504` (warn-and-continue on `FilesystemError`); fix and changelog kept as separate Conventional-Commits commits.
 
 ---
 
