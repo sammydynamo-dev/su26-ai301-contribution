@@ -3,7 +3,7 @@
 - **Contribution Number:** 1
 - **Student:** Temitope S. Olugbemi
 - **Issue:** <https://github.com/beetbox/beets/issues/840>
-- **Status:** Phase III in progress — fix + regression tests written (TDD) and passing on `fix-issue-840`; changelog added
+- **Status:** Phase III complete — fix + 5 regression tests (TDD) and changelog on `fix-issue-840`; full suite green (2408 passed) and all pre-submission checks pass. Next: open the PR (Phase IV)
 
 ---
 
