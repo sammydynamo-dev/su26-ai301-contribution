@@ -167,16 +167,16 @@ Reproduced #840 on macOS, confirmed the root cause (`importfeeds.py:131`), set u
 
 ## Pull Request
 
-**PR Link:** [GitHub PR URL when submitted]
+**PR Link:** <https://github.com/beetbox/beets/pull/6765> — *Fix importfeeds to continue on symlink creation failures*
 
-**PR Description:** [Draft or final PR description - much of the content above can be adapted]
+**PR Description:** `importfeeds` with `formats: link` no longer aborts the whole `beet import` when a symlink can't be created — it catches `beets.util.FilesystemError`, logs a per-item warning, and continues. Includes 5 regression tests and a changelog entry (`Fixes #840`). Full text: [`docs/pr-description-840.md`](docs/pr-description-840.md).
 
 **Maintainer Feedback:**
 
-- [Date]: [Summary of feedback received]
-- [Date]: [How you addressed it]
+- 2026-06-23: PR opened; awaiting first review (`reviewDecision: REVIEW_REQUIRED`) — no feedback yet.
+- Next steps: add a comment tagging `@snejus` (merged the near-identical fetchart fix #6662 and is the most recent committer on `importfeeds.py`); if there's no response within ~5–7 business days, post a polite follow-up.
 
-**Status:** [Awaiting review / Iterating / Approved / Merged]
+**Status:** Awaiting review
 
 ---
 
